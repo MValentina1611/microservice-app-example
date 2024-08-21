@@ -1,17 +1,102 @@
-# Microservice App - PRFT Devops Training
+# 📝 Microservice TODO Application
 
-This is the application you are going to use through the whole traninig. This, hopefully, will teach you the fundamentals you need in a real project. You will find a basic TODO application designed with a [microservice architecture](https://microservices.io). Although is a TODO application, it is interesting because the microservices that compose it are written in different programming language or frameworks (Go, Python, Vue, Java, and NodeJS). With this design you will experiment with multiple build tools and environments. 
+## 🌟 Resumen del Proyecto
+Esta aplicación es un ejemplo de arquitectura de microservicios diseñada para enseñar los fundamentos de sistemas distribuidos. La aplicación, aunque es una simple lista de tareas (TODO), está compuesta por múltiples microservicios escritos en diferentes lenguajes y frameworks, lo que permite experimentar con diversas herramientas y entornos.
 
-## Components
-In each folder you can find a more in-depth explanation of each component:
+### 🚀 Dockerización del Proyecto
+La aplicación está completamente dockerizada, lo que significa que cada microservicio se ejecuta en un contenedor independiente. Esto asegura que el entorno de desarrollo sea consistente y reproducible, sin importar dónde se ejecute.
 
-1. [Users API](/users-api) is a Spring Boot application. Provides user profiles. At the moment, does not provide full CRUD, just getting a single user and all users.
-2. [Auth API](/auth-api) is a Go application, and provides authorization functionality. Generates [JWT](https://jwt.io/) tokens to be used with other APIs.
-3. [TODOs API](/todos-api) is a NodeJS application, provides CRUD functionality over user's TODO records. Also, it logs "create" and "delete" operations to [Redis](https://redis.io/) queue.
-4. [Log Message Processor](/log-message-processor) is a queue processor written in Python. Its purpose is to read messages from a Redis queue and print them to standard output.
-5. [Frontend](/frontend) Vue application, provides UI.
+---
 
-## Architecture
+## 📦 Componentes
 
+- **Users API:** Aplicación Spring Boot para gestionar perfiles de usuario.
+- **Auth API:** Aplicación Go que proporciona funcionalidad de autenticación mediante JWT.
+- **TODOs API:** Aplicación Node.js que maneja operaciones CRUD para las tareas.
+- **Log Message Processor:** Procesador de mensajes en cola, escrito en Python, que lee y procesa logs desde Redis.
+- **Frontend:** Aplicación Vue.js que sirve como interfaz de usuario.
+
+---
+
+## 🐳 Dockerfiles y Docker Compose
+
+### 🏗️ Dockerfiles
+
+Cada microservicio tiene su propio Dockerfile, que define cómo se construirá la imagen del contenedor:
+
+1. **Users API:** 
+   - **Base:** `openjdk:8-jdk-alpine`.
+   - **Comando clave:** `./mvnw clean install` para construir la aplicación Java.
+
+2. **Auth API:** 
+   - **Base:** `golang:1.18.2` (etapa de construcción) y `gcr.io/distroless/base-debian10` (imagen final).
+   - **Comando clave:** `go build -o auth-api` para compilar la aplicación Go.
+
+3. **Frontend:** 
+   - **Base:** `node:8.17.0`.
+   - **Comando clave:** `npm run build` para construir la aplicación Vue.js.
+
+4. **TODOs API:** 
+   - **Base:** `node:8.17.0`.
+   - **Comando clave:** `npm install` para instalar dependencias.
+
+5. **Log Message Processor:** 
+   - **Base:** `python:3.6`.
+   - **Comando clave:** `pip install -r requirements.txt` para instalar dependencias Python.
+
+### 🛠️ Docker Compose
+
+Docker Compose simplifica la ejecución de la aplicación al orquestar todos los contenedores desde un solo archivo (`docker-compose.yml`). Esto incluye:
+
+- **Definición de servicios:** Cada microservicio se define como un servicio en el archivo Compose.
+- **Mapeo de puertos:** Permite el acceso a los servicios desde el host.
+- **Variables de entorno:** Configura los parámetros necesarios para cada servicio.
+- **Redes:** Todos los servicios están conectados a una red interna (`app-network`), que permite la comunicación entre ellos de forma aislada del resto del sistema.
+
+
+---
+## 🔧 Comandos Útiles
+
+Aquí algunos comandos básicos para trabajar con Docker en este proyecto:
+
+- **Construir imágenes:**
+  ```bash
+  docker-compose build
+
+- **Levantar todos los servicios:**
+  ```bash
+  docker-compose up
+
+- **Detener y eliminar contenedores:**
+  ```bash
+  docker-compose down
+---
+
+## 🕸️ Arquitectura de Red
+
+Los microservicios se comunican entre sí mediante HTTP a través de una red interna (bridge network) definida en Docker Compose. Redis actúa como un broker de mensajes para la comunicación entre el servicio de TODOs API y el Log Message Processor.
+
+---
+
+## 🌐 Servicios y Puertos Expuestos
+
+* **👤 Users API:** Puerto `8083` - Proporciona la funcionalidad de gestión de usuarios.
+* **🔐 Auth API:** Puerto `8000` - Responsable de la autenticación y autorización.
+* **📝 TODOs API:** Puerto `8082` - Gestiona las operaciones sobre las tareas.
+* **📄 Log Message Processor:** No expone un puerto ya que su función es procesar mensajes internamente.
+* **🖥️ Frontend:** Puerto `8080` - Interfaz gráfica que interactúa con los microservicios.
+  
 Take a look at the components diagram that describes them and their interactions.
+
 ![microservice-app-example](/arch-img/Microservices.png)
+
+*Tomado del repositorio origen [https://github.com/bortizf/microservice-app-example]()*
+
+---
+## 🛠️ Dependencias Tecnológicas
+
+* **☕ Java (openJDK8)**
+* **🐹 Go (1.18.2)**
+* **🟩 Node (8.17.0) & NPM (6.13.4)**
+* **📝 Redis (7.0)**
+* **🐍 Python (3.6) & Pip**
