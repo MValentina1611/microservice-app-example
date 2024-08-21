@@ -1,21 +1,21 @@
-# Dockerfile para Users API
+# Utiliza la imagen base de Alpine Linux con JDK 8
 FROM openjdk:8-jdk-alpine
 
+# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar los archivos del proyecto
+# Copia todos los archivos de la aplicación al contenedor
 COPY . .
 
-# Construir la aplicación usando Maven Wrapper
+# Construye la aplicación usando Maven Wrapper para crear el archivo .jar
 RUN ./mvnw clean install
 
-# Configuraciones de entorno
+# Define variables de entorno necesarias para la aplicación
 ENV JWT_SECRET=PRFT
 ENV SERVER_PORT=8083
 
-# Exponer el puerto
+# Expone el puerto definido para el servicio
 EXPOSE ${SERVER_PORT}
 
-# Comando para ejecutar la aplicación
+# Comando que se ejecuta cuando se inicia el contenedor
 CMD ["java", "-jar", "target/users-api-0.0.1-SNAPSHOT.jar"]
-
