@@ -91,7 +91,7 @@ Take a look at the components diagram that describes them and their interactions
 
 This the deploy diagram of the application
 
-![deploy diagram](/arch-img/Msa-Depd.drawio.png) 
+![deploydiagram](/arch-img/Msa-Depd.drawio.png) 
 
 ---
 
@@ -121,7 +121,19 @@ For monitoring the application, three main tools are used: **Prometheus**, **Gra
   ```promql
   rate(container_cpu_usage_seconds_total{image!="", container_label_com_docker_swarm_service_name!="", container_label_com_docker_swarm_task_name=""}[5m])
 
-**Grafana's dashboard:**
+**:chart_with_downwards_trend:	Grafana's dashboard:** 
+![Cache](/arch-img/cpu-containers.png)
+
+![Memory](/arch-img/memory-usage.png)
+
+![Cache](/arch-img/cpu-containers.png)
+
+![Network-traffic](/arch-img/network-traffic.png)
+
+*Source: [http://localhost:3000/d/4dMaCsRZz/docker-container-and-host-metrics?orgId=1&from=now-6h&to=now-4h&viewPanel=19&editPanel=19]()*
+
+As shown in the Grafana charts, the application was up but inactive for an extended period, until before 17:40. After that, I started making requests by logging in with each user and editing the to-do list, which is when a significant change in the metrics is observed. For example, in the CPU usage per container, there is a noticeable increase in CPU usage by the `users_api` and `todos_api` containers due to the dynamic nature of the requests being made. In the rest of the charts, we see a similar behavior, with an increase in metrics when more requests are made. Another interesting chart is the network traffic across the entire node, where we see a significant rise in the sending and receiving of information.
+
 
 
 ---
