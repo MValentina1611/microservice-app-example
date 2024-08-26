@@ -91,7 +91,8 @@ Take a look at the components diagram that describes them and their interactions
 
 This is the deploy diagram of the application
 
-![Deploy](/arch-img/Msa-Depd.png)
+![Deploy](/arch-img/deployD.png)
+
 
 ---
 
