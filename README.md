@@ -89,9 +89,9 @@ Take a look at the components diagram that describes them and their interactions
 
 *Source: [https://github.com/bortizf/microservice-app-example]()*
 
-This the deploy diagram of the application
+This is the deploy diagram of the application
 
-![deploydiagram](/arch-img/Msa-Depd.drawio.png) 
+![Deploy](/arch-img/Msa-Depd.png)
 
 ---
 
@@ -122,11 +122,11 @@ For monitoring the application, three main tools are used: **Prometheus**, **Gra
   rate(container_cpu_usage_seconds_total{image!="", container_label_com_docker_swarm_service_name!="", container_label_com_docker_swarm_task_name=""}[5m])
 
 **:chart_with_downwards_trend:	Grafana's dashboard:** 
-![Cache](/arch-img/cpu-containers.png)
+![CPU](/arch-img/cpu-containers.png)
 
 ![Memory](/arch-img/memory-usage.png)
 
-![Cache](/arch-img/cpu-containers.png)
+![Cache](/arch-img/cache-memory.png)
 
 ![Network-traffic](/arch-img/network-traffic.png)
 
