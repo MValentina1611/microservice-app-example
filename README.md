@@ -1,102 +1,141 @@
 # 📝 Microservice TODO Application
 
-## 🌟 Resumen del Proyecto
-Esta aplicación es un ejemplo de arquitectura de microservicios diseñada para enseñar los fundamentos de sistemas distribuidos. La aplicación, aunque es una simple lista de tareas (TODO), está compuesta por múltiples microservicios escritos en diferentes lenguajes y frameworks, lo que permite experimentar con diversas herramientas y entornos.
+## 🌟 Project Summary
+This application is an example of a microservice architecture designed to teach the fundamentals of distributed systems. The application, although a simple TODO list, consists of multiple microservices written in different languages and frameworks, allowing experimentation with various tools and environments.
 
-### 🚀 Dockerización del Proyecto
-La aplicación está completamente dockerizada, lo que significa que cada microservicio se ejecuta en un contenedor independiente. Esto asegura que el entorno de desarrollo sea consistente y reproducible, sin importar dónde se ejecute.
-
----
-
-## 📦 Componentes
-
-- **Users API:** Aplicación Spring Boot para gestionar perfiles de usuario.
-- **Auth API:** Aplicación Go que proporciona funcionalidad de autenticación mediante JWT.
-- **TODOs API:** Aplicación Node.js que maneja operaciones CRUD para las tareas.
-- **Log Message Processor:** Procesador de mensajes en cola, escrito en Python, que lee y procesa logs desde Redis.
-- **Frontend:** Aplicación Vue.js que sirve como interfaz de usuario.
+### 🚀 Dockerization of the Project
+The application is fully dockerized, meaning each microservice runs in its own container. This ensures that the development environment is consistent and reproducible, no matter where it is run.
 
 ---
 
-## 🐳 Dockerfiles y Docker Compose
+## 📦 Components
+
+- **Users API:** Spring Boot application for managing user profiles.
+- **Auth API:** Go application that provides authentication functionality using JWT.
+- **TODOs API:** Node.js application that handles CRUD operations for tasks.
+- **Log Message Processor:** Message processor written in Python that reads and processes logs from Redis.
+- **Frontend:** Vue.js application that serves as the user interface.
+
+---
+
+## 🐳 Dockerfiles and Docker Compose
 
 ### 🏗️ Dockerfiles
 
-Cada microservicio tiene su propio Dockerfile, que define cómo se construirá la imagen del contenedor:
+Each microservice has its own Dockerfile that defines how the container image will be built:
 
 1. **Users API:** 
    - **Base:** `openjdk:8-jdk-alpine`.
-   - **Comando clave:** `./mvnw clean install` para construir la aplicación Java.
+   - **Key Command:** `./mvnw clean install` to build the Java application.
 
 2. **Auth API:** 
-   - **Base:** `golang:1.18.2` (etapa de construcción) y `gcr.io/distroless/base-debian10` (imagen final).
-   - **Comando clave:** `go build -o auth-api` para compilar la aplicación Go.
+   - **Base:** `golang:1.18.2` (build stage) and `gcr.io/distroless/base-debian10` (final image).
+   - **Key Command:** `go build -o auth-api` to compile the Go application.
 
 3. **Frontend:** 
    - **Base:** `node:8.17.0`.
-   - **Comando clave:** `npm run build` para construir la aplicación Vue.js.
+   - **Key Command:** `npm run build` to build the Vue.js application.
 
 4. **TODOs API:** 
    - **Base:** `node:8.17.0`.
-   - **Comando clave:** `npm install` para instalar dependencias.
+   - **Key Command:** `npm install` to install dependencies.
 
 5. **Log Message Processor:** 
    - **Base:** `python:3.6`.
-   - **Comando clave:** `pip install -r requirements.txt` para instalar dependencias Python.
+   - **Key Command:** `pip install -r requirements.txt` to install Python dependencies.
 
 ### 🛠️ Docker Compose
 
-Docker Compose simplifica la ejecución de la aplicación al orquestar todos los contenedores desde un solo archivo (`docker-compose.yml`). Esto incluye:
+Docker Compose simplifies the execution of the application by orchestrating all containers from a single file (`docker-compose.yml`). This includes:
 
-- **Definición de servicios:** Cada microservicio se define como un servicio en el archivo Compose.
-- **Mapeo de puertos:** Permite el acceso a los servicios desde el host.
-- **Variables de entorno:** Configura los parámetros necesarios para cada servicio.
-- **Redes:** Todos los servicios están conectados a una red interna (`app-network`), que permite la comunicación entre ellos de forma aislada del resto del sistema.
-
+- **Service Definitions:** Each microservice is defined as a service in the Compose file.
+- **Port Mapping:** Allows access to services from the host.
+- **Environment Variables:** Configures necessary parameters for each service.
+- **Networks:** All services are connected to an internal network (`app-network`), allowing communication between them in isolation from the rest of the system.
 
 ---
-## 🔧 Comandos Útiles
+## 🔧 Useful Commands
 
-Aquí algunos comandos básicos para trabajar con Docker en este proyecto:
-
-- **Construir imágenes:**
+- **Build Images:**
   ```bash
   docker-compose build
 
-- **Levantar todos los servicios:**
+- **Start all services:**
   ```bash
   docker-compose up
 
-- **Detener y eliminar contenedores:**
+- **Stop and remove containers:**
   ```bash
   docker-compose down
 ---
 
-## 🕸️ Arquitectura de Red
+## 🕸️ Network Architecture
 
-Los microservicios se comunican entre sí mediante HTTP a través de una red interna (bridge network) definida en Docker Compose. Redis actúa como un broker de mensajes para la comunicación entre el servicio de TODOs API y el Log Message Processor.
+Microservices communicate with each other over HTTP through an internal network (bridge network) defined in Docker Compose. Redis acts as a message broker for communication between the TODOs API service and the Log Message Processor.
 
 ---
 
-## 🌐 Servicios y Puertos Expuestos
+## 🌐 Services and Exposed Ports
 
-* **👤 Users API:** Puerto `8083` - Proporciona la funcionalidad de gestión de usuarios.
-* **🔐 Auth API:** Puerto `8000` - Responsable de la autenticación y autorización.
-* **📝 TODOs API:** Puerto `8082` - Gestiona las operaciones sobre las tareas.
-* **📄 Log Message Processor:** No expone un puerto ya que su función es procesar mensajes internamente.
-* **🖥️ Frontend:** Puerto `8080` - Interfaz gráfica que interactúa con los microservicios.
-  
+* **👤 Users API:** Port `8083` - Provides user management functionality.
+* **🔐 Auth API:** Port `8000` - Responsible for authentication and authorization.
+* **📝 TODOs API:** Port `8082` - Manages CRUD operations for tasks.
+* **📄 Log Message Processor:** Does not expose a port as its function is to process messages internally.
+* **🖥️ Frontend:** Port `8080` - User interface interacting with the microservices.
+
 Take a look at the components diagram that describes them and their interactions.
 
 ![microservice-app-example](/arch-img/Microservices.png)
 
-*Tomado del repositorio origen [https://github.com/bortizf/microservice-app-example]()*
+*Source: [https://github.com/bortizf/microservice-app-example]()*
+
+This the deploy diagram of the application
+
+![deploy diagram](/arch-img/Msa-Depd.drawio.png) 
 
 ---
-## 🛠️ Dependencias Tecnológicas
+
+## 📊 Monitoring
+
+For monitoring the application, three main tools are used: **Prometheus**, **Grafana**, and **cAdvisor**. Here’s how these tools interact to provide a comprehensive view of container status and performance.
+
+**:owl: cAdvisor:**
+- **Role:** cAdvisor is responsible for collecting performance and resource metrics from Docker containers. These metrics include CPU, memory, network, and disk usage, among others.
+- **Functioning:** cAdvisor exposes an API with these metrics that Prometheus can scrape.
+
+**:trident: Prometheus:**
+- **Role:** Prometheus acts as a metric storage and querying system. It collects the metrics exposed by cAdvisor and stores them in a time-series database.
+- **Functioning:** Prometheus performs periodic scraping of metrics exposed by cAdvisor and stores this data. Grafana then queries Prometheus to visualize this data.
+
+**:flying_disc: Grafana:**
+- **Role:** Grafana is a visualization platform that allows creating dashboards and graphs from metrics stored in Prometheus.
+- **Functioning:** Grafana connects to Prometheus as a data source and uses PromQL queries to retrieve and display information in charts and tables.
+
+**:electric_plug: Exposed Ports:**
+- **cAdvisor:** Exposes metrics on port `8081`.
+- **Prometheus:** Exposes its web interface on port `9090`.
+- **Grafana:** Exposes its web interface on port `3000`.
+
+*Examples of Prometheus Queries:*
+- **CPU Usage per Container:**
+  ```promql
+  rate(container_cpu_usage_seconds_total{image!="", container_label_com_docker_swarm_service_name!="", container_label_com_docker_swarm_task_name=""}[5m])
+
+**Grafana's dashboard:**
+
+
+---
+## :bookmark_tabs: Conclusion
+This project has been a valuable learning experience, providing practical insights into designing and managing microservices, containerizing applications with Docker, and setting up effective monitoring with Prometheus, Grafana, and cAdvisor. We’ve gained hands-on skills in application deployment, internal networking, and performance monitoring, which are essential for modern software development. Overall, this project has enhanced our understanding of how to build and maintain scalable, distributed systems and highlighted the importance of thorough documentation and monitoring.
+
+---
+
+## 🛠️ Technological Dependencies
 
 * **☕ Java (openJDK8)**
 * **🐹 Go (1.18.2)**
 * **🟩 Node (8.17.0) & NPM (6.13.4)**
 * **📝 Redis (7.0)**
 * **🐍 Python (3.6) & Pip**
+  
+
