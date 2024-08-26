@@ -10,7 +10,7 @@ services:
       - USERS_API_ADDRESS=http://users-api:8083
       - JWT_SECRET=PRFT
     networks:
-      - app-network
+      - msa-network
 
   users-api:
     build: ./users-api
@@ -20,7 +20,7 @@ services:
       - JWT_SECRET=PRFT
       - SERVER_PORT=8083
     networks:
-      - app-network
+      - msa-network
 
   log-message-processor:
     build: ./log-message-processor
@@ -31,7 +31,7 @@ services:
     depends_on:
       - redis
     networks:
-      - app-network
+      - msa-network
 
   todos-api:
     build: ./todos-api
@@ -46,7 +46,7 @@ services:
     depends_on:
       - redis
     networks:
-      - app-network
+      - msa-network
 
   frontend:
     build: ./frontend
@@ -57,17 +57,44 @@ services:
       - AUTH_API_ADDRESS=http://auth-api:8000
       - TODOS_API_ADDRESS=http://todos-api:8082
     networks:
-      - app-network
+      - msa-network
 
   redis:
     image: redis:7.0
     ports:
       - "6379:6379"
     networks:
-      - app-network
+      - msa-network
+
+  cadvisor:
+    image: google/cadvisor:latest
+    ports:
+      - "8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - msa-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - msa-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - msa-network
 
 networks:
-  app-network:
+  msa-network:
     driver: bridge
-
-
