@@ -143,6 +143,33 @@ This project has been a valuable learning experience, providing practical insigh
 
 ---
 
+# Microservices Deployment with Vagrant and Docker 🚀
+
+Each service runs in its own virtual machine, and the services communicate through a shared private network.
+
+## 🚀 Deployed Services
+- **Auth API** (`auth-api`)
+- **Users API** (`users-api`)
+- **Log Message Processor** (`log-message-processor`)
+- **Todos API** (`todos-api`)
+- **Frontend** (`frontend`)
+- **Redis** (`redis`)
+
+## ⚙️ Configuration
+1. **Docker Images**: Docker images are pulled from Docker Hub using the repository names `valencastro/microservice-app-example_*`.
+2. **Private Network**: All virtual machines are on the same private network with static IPs assigned to facilitate communication between services.
+3. **Provisioning**: Each virtual machine installs Docker and runs the corresponding container using environment variables to configure communication between services.
+
+## 💻 Deployment Steps
+1. Clone the repository containing the `Vagrantfile`.
+2. Navigate to the directory where the `Vagrantfile` is located.
+3. Run `vagrant up` to start and provision all virtual machines.
+4. Once deployed, you can access the services on their respective ports.
+
+That’s it! Your microservices application will be up and running in a fully virtualized environment. 🎉
+
+---
+
 ## 🛠️ Technological Dependencies
 
 * **☕ Java (openJDK8)**
