@@ -1,0 +1,98 @@
+Vagrant.configure("2") do |config|
+
+  # Configuración de la red privada para todas las VMs
+  config.vm.network "private_network", type: "dhcp"
+
+  # Máquina virtual para el Auth API
+  config.vm.define "auth-api" do |auth_api|
+    auth_api.vm.box = "ubuntu/bionic64"
+    auth_api.vm.hostname = "auth-api"
+    auth_api.vm.network "private_network", ip: "192.168.50.2"
+    auth_api.vm.provision "docker"
+    auth_api.vm.provision "shell", inline: <<-SHELL
+      docker pull valencastro/microservice-app-example_auth-api
+      docker run -d -p 8000:8000 --name auth-api \
+        -e AUTH_API_PORT=8000 \
+        -e USERS_API_ADDRESS=http://192.168.50.3:8083 \
+        -e JWT_SECRET=PRFT \
+        valencastro/microservice-app-example_auth-api
+    SHELL
+  end
+
+  # Máquina virtual para el Users API
+  config.vm.define "users-api" do |users_api|
+    users_api.vm.box = "ubuntu/bionic64"
+    users_api.vm.hostname = "users-api"
+    users_api.vm.network "private_network", ip: "192.168.50.3"
+    users_api.vm.provision "docker"
+    users_api.vm.provision "shell", inline: <<-SHELL
+      docker pull valencastro/microservice-app-example_users-api
+      docker run -d -p 8083:8083 --name users-api \
+        -e JWT_SECRET=PRFT \
+        -e SERVER_PORT=8083 \
+        valencastro/microservice-app-example_users-api
+    SHELL
+  end
+
+  # Máquina virtual para el Log Message Processor
+  config.vm.define "log-message-processor" do |log_message_processor|
+    log_message_processor.vm.box = "ubuntu/bionic64"
+    log_message_processor.vm.hostname = "log-message-processor"
+    log_message_processor.vm.network "private_network", ip: "192.168.50.4"
+    log_message_processor.vm.provision "docker"
+    log_message_processor.vm.provision "shell", inline: <<-SHELL
+      docker pull valencastro/microservice-app-example_log-message-processor
+      docker run -d --name log-message-processor \
+        -e REDIS_HOST=192.168.50.5 \
+        -e REDIS_PORT=6379 \
+        -e REDIS_CHANNEL=log_channel \
+        valencastro/microservice-app-example_log-message-processor
+    SHELL
+  end
+
+  # Máquina virtual para el Todos API
+  config.vm.define "todos-api" do |todos_api|
+    todos_api.vm.box = "ubuntu/bionic64"
+    todos_api.vm.hostname = "todos-api"
+    todos_api.vm.network "private_network", ip: "192.168.50.6"
+    todos_api.vm.provision "docker"
+    todos_api.vm.provision "shell", inline: <<-SHELL
+      docker pull valencastro/microservice-app-example_todos-api
+      docker run -d -p 8082:8082 --name todos-api \
+        -e TODO_API_PORT=8082 \
+        -e JWT_SECRET=PRFT \
+        -e REDIS_HOST=192.168.50.5 \
+        -e REDIS_PORT=6379 \
+        -e REDIS_CHANNEL=log_channel \
+        valencastro/microservice-app-example_todos-api
+    SHELL
+  end
+
+  # Máquina virtual para el Frontend
+  config.vm.define "frontend" do |frontend|
+    frontend.vm.box = "ubuntu/bionic64"
+    frontend.vm.hostname = "frontend"
+    frontend.vm.network "private_network", ip: "192.168.50.7"
+    frontend.vm.provision "docker"
+    frontend.vm.provision "shell", inline: <<-SHELL
+      docker pull valencastro/microservice-app-example_frontend
+      docker run -d -p 8080:8080 --name frontend \
+        -e PORT=8080 \
+        -e AUTH_API_ADDRESS=http://192.168.50.2:8000 \
+        -e TODOS_API_ADDRESS=http://192.168.50.6:8082 \
+        valencastro/microservice-app-example_frontend
+    SHELL
+  end
+
+  # Máquina virtual para Redis (dependencia del Log Message Processor)
+  config.vm.define "redis" do |redis|
+    redis.vm.box = "ubuntu/bionic64"
+    redis.vm.hostname = "redis"
+    redis.vm.network "private_network", ip: "192.168.50.5"
+    redis.vm.provision "docker"
+    redis.vm.provision "shell", inline: <<-SHELL
+      docker run -d --name redis -p 6379:6379 redis:7.0
+    SHELL
+  end
+
+end
