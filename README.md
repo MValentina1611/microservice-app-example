@@ -166,8 +166,6 @@ Each service runs in its own virtual machine, and the services communicate throu
 3. Run `vagrant up` to start and provision all virtual machines.
 4. Once deployed, you can access the services on their respective ports.
 
-That’s it! Your microservices application will be up and running in a fully virtualized environment. 🎉
-
 ---
 
 ## 🛠️ Technological Dependencies
